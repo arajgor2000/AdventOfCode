@@ -48,9 +48,9 @@ public class Day2 : Solution
         long totalScore = 0;
         foreach (var round in _rounds)
         {
-            var inputs = round.Split(' ');
-            var opponent = inputs[0][0];
-            var you = inputs[1][0];
+            var players = round.Split(' ');
+            var opponent = players[0][0];
+            var you = players[1][0];
 
             var roundScore = _outcomeScores[_playerMappings[opponent], _playerMappings[you]] + _shapeScoreMappings[you];
 
