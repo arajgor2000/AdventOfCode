@@ -3,11 +3,11 @@
 namespace _2022.Solutions;
 
 [Solution(2)]
-[SolutionInput("Day2 - Example.txt")]
+[SolutionInput("Day2.txt")]
 public class Day2 : Solution
 {
-    private readonly Dictionary<char, int> _playerMappings;
     private readonly Dictionary<char, int> _shapeScoreMappings;
+    private readonly Dictionary<char, int> _playerMappings;
     private readonly int[,] _outcomeScores;
     private readonly string[] _rounds;
 
