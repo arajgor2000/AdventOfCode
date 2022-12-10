@@ -7,4 +7,4 @@ SolutionRunner runner = new(
         InputBaseDirectory = "Inputs"
     });
 
-runner.Solve(1, Problem.All);
+runner.Solve(2, Problem.All);
