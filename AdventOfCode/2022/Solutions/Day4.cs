@@ -6,30 +6,25 @@ namespace _2022.Solutions;
 [SolutionInput("Day4.txt")]
 public class Day4 : Solution
 {
-    private readonly string[] _lines;
+    private readonly List<RangePair> _rangePairs;
 
     public Day4(Input input) : base(input)
     {
-        _lines = input.Lines;
+        _rangePairs = new List<RangePair>();
+        foreach (var line in input.Lines)
+        {
+            var ranges = line.Split(',');
+            _rangePairs.Add(new(new Range(ranges[0]), new Range(ranges[1])));
+        }
     }
 
     protected override string? Problem1()
     {
         long sum = 0;
-        foreach (var line in _lines)
+        foreach (var rangePair in _rangePairs)
         {
-            var ranges = line.Split(',');
-            
-            var range1Limits = ranges[0].Split('-');
-            var range1Lower = int.Parse(range1Limits[0]);
-            var range1Upper = int.Parse(range1Limits[1]);
-
-            var range2Limits = ranges[1].Split('-');
-            var range2Lower = int.Parse(range2Limits[0]);
-            var range2Upper = int.Parse(range2Limits[1]);
-
-            if ((range1Lower <= range2Lower && range1Upper >= range2Upper) || 
-                (range2Lower <= range1Lower && range2Upper >= range1Upper))
+            if ((rangePair.Range1.Lower <= rangePair.Range2.Lower && rangePair.Range1.Upper >= rangePair.Range2.Upper) || 
+                (rangePair.Range2.Lower <= rangePair.Range1.Lower && rangePair.Range2.Upper >= rangePair.Range1.Upper))
             {
                 sum++;
             }
@@ -40,6 +35,33 @@ public class Day4 : Solution
 
     protected override string? Problem2()
     {
-        return null;
+        long sum = 0;
+        foreach (var rangePair in _rangePairs)
+        {
+            if ((rangePair.Range1.Lower >= rangePair.Range2.Lower && rangePair.Range1.Lower <= rangePair.Range2.Upper) ||
+                (rangePair.Range1.Upper >= rangePair.Range2.Lower && rangePair.Range1.Upper <= rangePair.Range2.Upper) ||
+                (rangePair.Range2.Lower >= rangePair.Range1.Lower && rangePair.Range2.Lower <= rangePair.Range1.Upper) ||
+                (rangePair.Range2.Upper >= rangePair.Range1.Lower && rangePair.Range2.Upper <= rangePair.Range1.Upper))
+            {
+                sum++;
+            }
+        }
+
+        return sum.ToString();
     }
+
+    public struct Range
+    {
+        public int Lower { get; }
+        public int Upper { get; }
+
+        public Range(string range)
+        {
+            var rangeLimits = range.Split('-');
+            Lower = int.Parse(rangeLimits[0]);
+            Upper = int.Parse(rangeLimits[1]);
+        }
+    }
+
+    private record struct RangePair(Range Range1, Range Range2);
 }
