@@ -54,7 +54,28 @@ public class Day3 : Solution
 
     protected override string? Problem2()
     {
-        return null;
+        if (_rucksacks.Length % 3 != 0)
+        {
+            throw new ApplicationException($"Number of rucksacks ({_rucksacks.Length}) not divisible by 3");
+        }
+
+        long sum = 0;
+        for (var index = 0; index < _rucksacks.Length; index += 3)
+        {
+            var rucksack1 = _rucksacks[index].ToHashSet();
+            var rucksack2 = _rucksacks[index + 1].ToHashSet();
+            var rucksack3 = _rucksacks[index + 2].ToHashSet();
+            foreach (var item in rucksack1)
+            {
+                if (rucksack2.Contains(item) && rucksack3.Contains(item))
+                {
+                    sum += GetItemPriority(item);
+                    break;
+                }
+            }
+        }
+
+        return sum.ToString();
     }
 
     private int GetItemPriority(char item)
