@@ -6,20 +6,59 @@ namespace _2022.Solutions;
 [SolutionInput("Day3.txt")]
 public class Day3 : Solution
 {
-    private readonly string[] _lines;
+    private readonly string[] _rucksacks;
 
     public Day3(Input input) : base(input)
     {
-        _lines = input.Lines;
+        _rucksacks = input.Lines;
     }
 
     protected override string? Problem1()
     {
-        return null;
+        long sum = 0;
+        var compartment1Items = new HashSet<char>();
+        var compartment2Items = new HashSet<char>();
+        foreach (var rucksack in _rucksacks)
+        {
+            compartment1Items.Clear();
+            compartment2Items.Clear();
+            for (var index = 0; index < rucksack.Length / 2; index++)
+            {
+                var compartment1Item = rucksack[index];
+                var isNewCompartment1Item = compartment1Items.Add(compartment1Item);
+                
+                var compartment2Item = rucksack[rucksack.Length - 1 - index];
+                var isNewCompartment2Item = compartment2Items.Add(compartment2Item);
+
+                if (isNewCompartment1Item && isNewCompartment2Item && compartment1Item == compartment2Item)
+                {
+                    sum += GetItemPriority(compartment1Item);
+                }
+                else
+                {
+                    if (isNewCompartment1Item && compartment2Items.Contains(compartment1Item))
+                    {
+                        sum += GetItemPriority(compartment1Item);
+                    }
+
+                    if (isNewCompartment2Item && compartment1Items.Contains(compartment2Item))
+                    {
+                        sum += GetItemPriority(compartment2Item);
+                    }
+                }
+            }
+        }
+
+        return sum.ToString();
     }
 
     protected override string? Problem2()
     {
         return null;
+    }
+
+    private int GetItemPriority(char item)
+    {
+        return char.IsLower(item) ? item - 96 : item - 38;
     }
 }
