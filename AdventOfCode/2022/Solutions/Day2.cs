@@ -6,35 +6,41 @@ namespace _2022.Solutions;
 [SolutionInput("Day2.txt")]
 public class Day2 : Solution
 {
-    private readonly Dictionary<char, int> _shapeScoreMappings;
-    private readonly Dictionary<char, int> _playerMappings;
-    private readonly int[,] _outcomeScores;
+    private readonly Dictionary<char, int> _itemScoreMappings;
+    private readonly Dictionary<char, int> _playerMatrixIndexMappings;
+    private readonly int[,] _outcomeMatrixScores;
     private readonly string[] _rounds;
+
+    #region Outcome Matrix Indices
+    private const int INDEX_ROCK        = 0;
+    private const int INDEX_PAPER       = 1;
+    private const int INDEX_SCISSORS    = 2;
+    #endregion
 
     public Day2(Input input) : base(input)
     {
-        _shapeScoreMappings = new Dictionary<char, int>()
+        _itemScoreMappings = new Dictionary<char, int>()
         { 
             { 'X', 1 }, // Rock
             { 'Y', 2 }, // Paper 
             { 'Z', 3 }  // Scissors
         };
 
-        _playerMappings = new Dictionary<char, int>()
+        _playerMatrixIndexMappings = new Dictionary<char, int>()
         {
             // Opponent
-            { 'A', 0 }, // Rock
-            { 'B', 1 }, // Paper 
-            { 'C', 2 }, // Scissors
+            { 'A', INDEX_ROCK },
+            { 'B', INDEX_PAPER },
+            { 'C', INDEX_SCISSORS },
             
             // You
-            { 'X', 0 }, // Rock
-            { 'Y', 1 }, // Paper 
-            { 'Z', 2 }  // Scissors
+            { 'X', INDEX_ROCK },
+            { 'Y', INDEX_PAPER }, 
+            { 'Z', INDEX_SCISSORS }
         };
 
-        _outcomeScores = new int[,] 
-        { 
+        _outcomeMatrixScores = new int[,] 
+        {
             { 3, 6, 0 },
             { 0, 3, 6 },
             { 6, 0, 3 }
@@ -52,7 +58,7 @@ public class Day2 : Solution
             var opponent = players[0][0];
             var you = players[1][0];
 
-            var roundScore = _outcomeScores[_playerMappings[opponent], _playerMappings[you]] + _shapeScoreMappings[you];
+            var roundScore = _outcomeMatrixScores[_playerMatrixIndexMappings[opponent], _playerMatrixIndexMappings[you]] + _itemScoreMappings[you];
 
             totalScore += roundScore;
         }
@@ -62,6 +68,39 @@ public class Day2 : Solution
 
     protected override string? Problem2()
     {
-        return null;
+        var outcomeMappings = new Dictionary<char, int>()
+        {
+            { 'X', 0 }, // Lose
+            { 'Y', 3 }, // Draw 
+            { 'Z', 6 }  // Win
+        };
+
+        long totalScore = 0;
+        foreach (var round in _rounds)
+        {
+            var inputs = round.Split(' ');
+            var opponent = inputs[0][0];
+            var outcome = inputs[1][0];
+
+            var opponentIndex = _playerMatrixIndexMappings[opponent];
+            var requiredOutcomeScore = outcomeMappings[outcome];
+            int youIndex = 0;
+            for (var youCount = 0; youCount < _outcomeMatrixScores.GetLength(1); youCount++)
+            {
+                if (_outcomeMatrixScores[opponentIndex, youCount] == requiredOutcomeScore)
+                {
+                    youIndex = youCount;
+                    break;
+                }
+            }
+
+            char youItem = _playerMatrixIndexMappings.Last(item => item.Value == youIndex).Key;
+
+            var roundScore = requiredOutcomeScore + _itemScoreMappings[youItem];
+
+            totalScore += roundScore;
+        }
+
+        return totalScore.ToString();
     }
 }
